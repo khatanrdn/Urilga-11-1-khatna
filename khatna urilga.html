@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>You're Invited!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Josefin+Sans:wght@200;300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold:       #c9a84c;
+      --gold-light: #e8cc7a;
+      --gold-pale:  #f5e6b8;
+      --green-deep: #0d2b1e;
+      --green-mid:  #1a4a30;
+      --green-card: #142c1f;
+      --cream:      #fdf6e3;
+      --text-muted: rgba(245,230,184,0.55);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--green-deep);
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, #1f5c3a55 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, #c9a84c18 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.04'%3E%3Cpath d='M30 0 L60 30 L30 60 L0 30 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      font-family: 'Josefin Sans', sans-serif;
+      overflow: hidden;
+    }
+
+    /* ── Corner ornaments ── */
+    .corner {
+      position: fixed;
+      width: 120px;
+      height: 120px;
+      pointer-events: none;
+      opacity: 0.25;
+    }
+    .corner svg { width: 100%; height: 100%; }
+    .corner-tl { top: 0; left: 0; }
+    .corner-tr { top: 0; right: 0; transform: scaleX(-1); }
+    .corner-bl { bottom: 0; left: 0; transform: scaleY(-1); }
+    .corner-br { bottom: 0; right: 0; transform: scale(-1); }
+
+    /* ── Floating particles ── */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      animation: drift linear infinite;
+      opacity: 0;
+    }
+    @keyframes drift {
+      0%   { transform: translateY(110vh) rotate(0deg);   opacity: 0; }
+      10%  { opacity: 0.7; }
+      90%  { opacity: 0.5; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ── Card ── */
+    .card {
+      position: relative;
+      width: 520px;
+      background: var(--green-card);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 4px;
+      padding: 52px 48px 46px;
+      color: var(--cream);
+      box-shadow:
+        0 0 0 6px rgba(201,168,76,0.07),
+        0 0 0 7px rgba(201,168,76,0.18),
+        0 40px 90px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(201,168,76,0.2);
+      animation: cardIn 1s cubic-bezier(0.22,1,0.36,1) both;
+      z-index: 10;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(50px) scale(0.94); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Top geometric ornament */
+    .top-ornament {
+      text-align: center;
+      margin-bottom: 18px;
+      animation: fadeDown 0.8s 0.3s both;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .top-ornament svg { width: 220px; height: 28px; }
+
+    /* ── Corner inset lines ── */
+    .card::before, .card::after {
+      content: '';
+      position: absolute;
+      inset: 10px;
+      border: 1px solid rgba(201,168,76,0.12);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+    .card::after {
+      inset: 14px;
+      border-color: rgba(201,168,76,0.06);
+    }
+
+    .emoji-top {
+      text-align: center;
+      font-size: 40px;
+      margin-bottom: 10px;
+      animation: pop 0.7s 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes pop { from { transform: scale(0) rotate(-15deg); } to { transform: scale(1) rotate(0deg); } }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      text-align: center;
+      color: var(--gold-light);
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+      line-height: 1.1;
+      text-shadow: 0 2px 30px rgba(201,168,76,0.3);
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      font-weight: 300;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.5), transparent);
+    }
+    .divider-diamond {
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(201,168,76,0.6);
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+    .detail-box {
+      background: rgba(201,168,76,0.05);
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 2px;
+      padding: 15px 16px;
+      transition: background 0.3s, border-color 0.3s;
+      position: relative;
+    }
+    .detail-box::before {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 6px; height: 6px;
+      border-top: 1px solid rgba(201,168,76,0.4);
+      border-left: 1px solid rgba(201,168,76,0.4);
+    }
+    .detail-box:hover { background: rgba(201,168,76,0.09); border-color: rgba(201,168,76,0.35); }
+    .detail-box .icon { font-size: 18px; margin-bottom: 5px; }
+    .detail-box .label {
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 3px;
+      font-weight: 600;
+    }
+    .detail-box .value { font-size: 0.88rem; font-weight: 400; color: var(--cream); font-family: 'Cormorant Garamond', serif; font-size: 1rem; }
+
+    .message {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: rgba(245,230,184,0.75);
+      margin-bottom: 28px;
+      line-height: 1.8;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 13px 10px;
+      border: none;
+      border-radius: 2px;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.18s, box-shadow 0.18s, background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.08);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .btn:hover::after { opacity: 1; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0) scale(0.97); }
+
+    .btn-accept {
+      background: linear-gradient(135deg, #b8922e, #e8cc7a, #b8922e);
+      background-size: 200%;
+      background-position: left;
+      color: var(--green-deep);
+      box-shadow: 0 6px 20px rgba(201,168,76,0.35);
+    }
+    .btn-accept:hover {
+      background-position: right;
+      box-shadow: 0 10px 28px rgba(201,168,76,0.55);
+    }
+
+    .btn-decline {
+      background: transparent;
+      color: rgba(245,230,184,0.6);
+      border: 1px solid rgba(201,168,76,0.25);
+    }
+    .btn-decline:hover { border-color: rgba(201,168,76,0.5); color: var(--gold-pale); }
+
+    .btn-calendar {
+      width: 100%;
+      padding: 13px;
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid rgba(201,168,76,0.4);
+      box-shadow: inset 0 0 30px rgba(201,168,76,0.04);
+    }
+    .btn-calendar:hover {
+      background: rgba(201,168,76,0.08);
+      box-shadow: 0 6px 20px rgba(201,168,76,0.2), inset 0 0 30px rgba(201,168,76,0.06);
+    }
+
+    /* Bottom ornament */
+    .bottom-ornament {
+      text-align: center;
+      margin-top: 20px;
+      opacity: 0.35;
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: var(--green-card);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 4px;
+      padding: 44px 40px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 0 0 6px rgba(201,168,76,0.07), 0 0 0 7px rgba(201,168,76,0.15), 0 30px 60px rgba(0,0,0,0.6);
+      animation: modalIn 0.4s cubic-bezier(0.22,1,0.36,1);
+      position: relative;
+    }
+    .modal::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(201,168,76,0.1);
+      pointer-events: none;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.85) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal .modal-emoji { font-size: 52px; margin-bottom: 14px; }
+    .modal h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      color: var(--gold-light);
+      margin-bottom: 10px;
+    }
+    .modal p { font-size: 0.88rem; color: rgba(245,230,184,0.65); margin-bottom: 26px; line-height: 1.7; }
+    .btn-close {
+      padding: 12px 36px;
+      background: linear-gradient(135deg, #b8922e, #e8cc7a);
+      color: var(--green-deep);
+      border: none;
+      border-radius: 2px;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .btn-close:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(201,168,76,0.45); }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: linear-gradient(135deg, #1a4a30, #0d2b1e);
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--gold-light);
+      padding: 12px 28px;
+      border-radius: 2px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      z-index: 200;
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+  <!-- Corner ornaments -->
+  <div class="corner corner-tl">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <path d="M5 5 L115 5 M5 5 L5 115" stroke="#c9a84c" stroke-width="1.5"/>
+      <path d="M16 5 L16 16 L5 16" stroke="#c9a84c" stroke-width="1"/>
+      <path d="M5 45 L30 45 M45 5 L45 30" stroke="#c9a84c" stroke-width="0.5" opacity="0.6"/>
+      <circle cx="45" cy="45" r="3" fill="#c9a84c" opacity="0.7"/>
+      <path d="M20 20 L60 20 M20 20 L20 60" stroke="#c9a84c" stroke-width="0.5" opacity="0.3"/>
+    </svg>
+  </div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <div class="card">
+    <!-- Top SVG ornament -->
+    <div class="top-ornament">
+      <svg viewBox="0 0 220 28" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <line x1="0" y1="14" x2="80" y2="14" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+        <line x1="140" y1="14" x2="220" y2="14" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+        <polygon points="110,4 118,14 110,24 102,14" fill="none" stroke="#c9a84c" stroke-width="1"/>
+        <polygon points="110,8 115,14 110,20 105,14" fill="#c9a84c" opacity="0.5"/>
+        <circle cx="88" cy="14" r="2" fill="#c9a84c" opacity="0.7"/>
+        <circle cx="132" cy="14" r="2" fill="#c9a84c" opacity="0.7"/>
+        <line x1="92" y1="14" x2="100" y2="14" stroke="#c9a84c" stroke-width="0.75" opacity="0.4"/>
+        <line x1="120" y1="14" x2="128" y2="14" stroke="#c9a84c" stroke-width="0.75" opacity="0.4"/>
+      </svg>
+    </div>
+
+    <div class="emoji-top">🎂</div>
+    <h1>Урилга!</h1>
+    <p class="subtitle">Гоё юмнууд хийнээ!</p>
+
+    <div class="divider"><div class="divider-diamond"></div></div>
+
+    <div class="details-grid">
+      <div class="detail-box">
+        <div class="icon">🎂</div>
+        <div class="label">Баяр</div>
+        <div class="value">Төрөө-ийн BDAY</div>
+      </div>
+      <div class="detail-box">
+        <div class="icon">📅</div>
+        <div class="label">Хэзээ</div>
+        <div class="value">9-12, 2026</div>
+      </div>
+      <div class="detail-box">
+        <div class="icon">⏰</div>
+        <div class="label">Хэдээс</div>
+        <div class="value">17:00 – 00:00</div>
+      </div>
+      <div class="detail-box">
+        <div class="icon">📍</div>
+        <div class="label">Хаана</div>
+        <div class="value">Ciao Ciao restaurant</div>
+      </div>
+    </div>
+
+    <p class="message">
+      "У/Б-г доргионоо."
+    </p>
+
+    <div class="btn-row">
+      <button class="btn btn-accept"  onclick="respond('accept')">✓ &nbsp;Очно</button>
+      <button class="btn btn-decline" onclick="respond('decline')">✗ &nbsp;Чадахгүй</button>
+    </div>
+    <button class="btn btn-calendar" onclick="addToCalendar()">📆 &nbsp;Өдөр тэмдэглэх</button>
+
+    <div class="bottom-ornament">
+      <svg viewBox="0 0 160 16" xmlns="http://www.w3.org/2000/svg" fill="none" width="160" height="16">
+        <line x1="0" y1="8" x2="60" y2="8" stroke="#c9a84c" stroke-width="0.75"/>
+        <line x1="100" y1="8" x2="160" y2="8" stroke="#c9a84c" stroke-width="0.75"/>
+        <polygon points="80,2 86,8 80,14 74,8" fill="none" stroke="#c9a84c" stroke-width="1"/>
+        <circle cx="67" cy="8" r="1.5" fill="#c9a84c"/>
+        <circle cx="93" cy="8" r="1.5" fill="#c9a84c"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-emoji" id="modal-emoji">🎊</div>
+      <h2 id="modal-title">Woohoo!</h2>
+      <p id="modal-msg">Удахгүй уулзацгаая!</p>
+      <button class="btn-close" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Floating gold dust particles
+    for (let i = 0; i < 28; i++) {
+      const el = document.createElement('div');
+      el.className = 'particle';
+      const size = 2 + Math.random() * 5;
+      const isSquare = Math.random() > 0.6;
+      el.style.cssText = `
+        left: ${Math.random() * 100}vw;
+        width: ${size}px;
+        height: ${size}px;
+        background: ${['#c9a84c','#e8cc7a','#f5e6b8','#b8922e'][Math.floor(Math.random()*4)]};
+        border-radius: ${isSquare ? '1px' : '50%'};
+        transform: ${isSquare ? 'rotate(45deg)' : ''};
+        animation-duration: ${7 + Math.random() * 10}s;
+        animation-delay: ${Math.random() * 10}s;
+        opacity: 0;
+      `;
+      document.body.appendChild(el);
+    }
+
+    function openModal(emoji, title, msg) {
+      document.getElementById('modal-emoji').textContent = emoji;
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-msg').textContent   = msg;
+      document.getElementById('modal').classList.add('show');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('show');
+    }
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+    function respond(type) {
+      if (type === 'accept') {
+        openModal('🎊', "Ашгүй2!", "Ашгүй2. 9-12 уулзацгаая! 🎂");
+      } else {
+        openModal('😢', "bruhh", "Яахав зүсэм тоорт хадгалхаас ");
+      }
+    }
+    function addToCalendar() {
+      const title    = encodeURIComponent("Төрөө-ийн BDAY 🎉");
+      const dates    = "20260607T150000/20260607T180000";
+      const location = encodeURIComponent("Ciao Ciao restaurant");
+      const details  = encodeURIComponent("Хэдүүлээ лаанаа!");
+      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&location=${location}&details=${details}`;
+      window.open(url, '_blank');
+      showToast("📆 Opening Google Calendar...");
+    }
+    document.getElementById('modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+  </script>
+</body>
+</html>
